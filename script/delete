@@ -1,0 +1,9 @@
+#!/usr/bin/sh
+
+DIR=./blog/post
+
+post=$(ls $DIR | fzf)
+
+if [ ! -z $post ]; then
+    rm -i $DIR/$post
+fi

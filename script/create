@@ -1,0 +1,17 @@
+#!/usr/bin/sh
+
+BLOG=blog
+SOURCE=sauce
+post=$BLOG/$SOURCE/$1.md
+
+if [ -f $post ]; then
+    echo "$post \033[041malready exists\033[0m!!!"
+elif [ -z "$post" ]; then
+    echo "---\ntitle: \ndate: $(date +%F)\ntags: \n---" > $post
+
+    touch $post
+    
+    $EDITOR $post
+else
+    echo "\033[046minsert a file name!\033[0m"
+fi

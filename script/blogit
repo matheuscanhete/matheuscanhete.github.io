@@ -1,0 +1,45 @@
+#!/usr/bin/sh
+
+BLOG=blog
+TEMPLATES=templates
+SOURCE=sauce
+LIST_DIR=$TEMPLATES/list_of_post.html
+
+makeit(){
+    #if [ ! -f $BLOG/$SOURCE/*md ]; then
+    #   echo "\033[041mNO POST. CLEANING.\033[0m"
+    #   rm -i $BLOG/post/*
+    #else
+    posts=$(ls $BLOG/$SOURCE/*md)
+
+    for post in $posts
+    do
+        data=$(grep date $post | sed 's/date.*\s//g')
+        pandoc --template $TEMPLATES/template_blog.html -f gfm $post -o $(echo ${post%%.md}.html | sed "s/sauce\//post\/$data/g")
+        echo $post
+    done
+    #fi
+}
+
+postit(){
+    posts=$(ls $BLOG/post | sort -nfr)
+
+    > $LIST_DIR 
+    
+    for post in $posts
+    do
+        title=$(grep "title" $BLOG/post/$post | cut -d '<' -f2 | sed 's/^title.*>//g')
+        printf "\t\t\t$(printf "$post" | sed 's/^/<a class="post_link" href="post\//' | sed "s/$/\">$title<\/a><br>/")\n" >> $LIST_DIR
+    done
+
+    printf "\t</body>\n</html>" >> $LIST_DIR
+
+    export LIST_OF_POSTS=$(cat $LIST_DIR)
+
+    cat $TEMPLATES/template_index.html | envsubst > $BLOG/index.html
+}
+
+makeit
+postit
+
+echo "\033[045mDONE! 😎\033[0m"

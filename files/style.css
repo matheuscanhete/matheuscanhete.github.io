@@ -1,0 +1,82 @@
+@import url("https://fontlibrary.org//face/chivo");
+
+:root{
+    --dark: #2E3842;
+    --main: #3f495c;
+    --text: #ffffff;
+}
+
+*{
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "ChivoRegular", sans-serif;
+}
+
+a{
+    color: #cfe2fa;
+    text-decoration: none;
+}
+
+body{
+    background-image: url(../img/background.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+main{
+    background: var(--main);
+	color: var(--text);
+    border: 2px solid black; 
+    box-shadow: 10px 10px black;
+    max-width: 900px;
+    font-size: large;
+}
+
+h1{
+    text-align: center;
+    color: var(--text);
+    background: var(--dark);
+}
+
+ul{
+    column-count: 2;
+}
+
+table, td, tr{
+    border-spacing: 1em;
+}
+
+td{
+    width: 100%;
+}
+
+.center{
+    text-align: center;
+}
+
+.ano{
+    width: 15%;
+    font-style: italic;
+    font-size: small;
+    border-right: 3px solid var(--dark);
+}
+
+.desc{
+    color: #979FAD;
+}
+
+@media screen and (max-width: 415px){
+    ul{
+        column-count: 1;
+    }
+
+    *{
+        font-size: medium;
+    }
+
+    html{
+        min-width: 300px;
+    }
+}
