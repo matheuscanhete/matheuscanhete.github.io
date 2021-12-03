@@ -1,17 +1,16 @@
 #!/usr/bin/sh
 
+read -rp "Insert a name for the new file: " name
 BLOG=blog
 SOURCE=sauce
-post=$BLOG/$SOURCE/$1.md
+post=$BLOG/$SOURCE/$name.md
 
 if [ -f $post ]; then
-    echo "$post \033[041malready exists\033[0m!!!"
-elif [ -z "$post" ]; then
+    echo "$post \033[041mAlready exists\033[0m!!!"
+else
     echo "---\ntitle: \ndate: $(date +%F)\ntags: \n---" > $post
 
     touch $post
     
     $EDITOR $post
-else
-    echo "\033[046minsert a file name!\033[0m"
 fi

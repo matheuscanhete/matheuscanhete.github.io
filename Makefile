@@ -3,6 +3,6 @@
 blogit:
 	./script/blogit
 create:
-	echo 'objective'
+	./script/create
 delete:
 	./script/delete

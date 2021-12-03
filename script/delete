@@ -1,9 +1,25 @@
 #!/usr/bin/sh
+dir=./blog/sauce
+pdir=./blog/post
 
-DIR=./blog/post
+list_n(){
+    ls $dir | nl
+}
 
-post=$(ls $DIR | fzf)
+grep_html(){
+    ls $pdir | grep $1.html
+}
 
-if [ ! -z $post ]; then
-    rm -i $DIR/$post
+list_n
+
+echo "select the post number you wanna delete: "
+
+read post
+
+pick="$(list_n | grep -w $post | awk '{print $2}')"
+
+if [ ! -z $pick ]; then
+    read -p 'are you sure? ' sure && echo $sure | grep -iP "y|s" && rm $dir/$pick && rm $pdir/$(grep_html ${pick%%.*})
+else
+    echo "not an option"
 fi
