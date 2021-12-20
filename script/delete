@@ -12,9 +12,7 @@ grep_html(){
 
 list_n
 
-echo "select the post number you wanna delete: "
-
-read post
+read -p "select the post number you wanna delete: " post
 
 pick="$(list_n | grep -w $post | awk '{print $2}')"
 

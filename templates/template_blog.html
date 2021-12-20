@@ -19,7 +19,7 @@
 		<title>$title$</title>
 
 	</head>
-	<body>
+<body>
 
 	<header>
 		<div class="left-sidebar" id="left-sidebar">
@@ -41,17 +41,31 @@
 
 	</header>
 
-	<div class="content">
+<div class="content">
 
-            <h1>$title$</h1>
+<h1>$title$</h1>
+$if(subtitle)$
+<h2>$subtitle$</h2>
+$endif$
 
-            <time>$date$</time>
+<time>$date$</time>
 
-            <hr>
+<hr>
 
-            $body$
+$body$
 
-    </div>
+<hr>
 
-	</body>
+</div>
+
+$if(tags)$
+<div class="tag">
+<p>marcado como:</p>
+$for(tags)$
+<p><em><a href="../tags/$tags$.html">$tags$<a></em></p>
+$endfor$
+</div>
+$endif$
+
+</body>
 </html>

@@ -3,12 +3,12 @@
 read -rp "Insert a name for the new file: " name
 BLOG=blog
 SOURCE=sauce
-post=$BLOG/$SOURCE/$name.md
+post=$BLOG/$SOURCE/$(echo $name | tr ' ' '-').md
 
 if [ -f $post ]; then
     echo "$post \033[041mAlready exists\033[0m!!!"
 else
-    echo "---\ntitle: \ndate: $(date +%F)\ntags: \n---" > $post
+    echo "---\ntitle: \ndate: $(date +%F)\ntags:\n  -\n---" > $post
 
     touch $post
     

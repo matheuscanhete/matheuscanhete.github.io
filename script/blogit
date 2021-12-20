@@ -3,13 +3,10 @@
 BLOG=blog
 TEMPLATES=templates
 SOURCE=sauce
-LIST_DIR=$TEMPLATES/list_of_post.html
+LIST_DIR=$TEMPLATES/list_of_all.html
+LIST_TAGS=$TEMPLATES/list_of_tags.html
 
 makeit(){
-    #if [ ! -f $BLOG/$SOURCE/*md ]; then
-    #   echo "\033[041mNO POST. CLEANING.\033[0m"
-    #   rm -i $BLOG/post/*
-    #else
     posts=$(ls $BLOG/$SOURCE/*md)
 
     for post in $posts
@@ -18,7 +15,6 @@ makeit(){
         pandoc --template $TEMPLATES/template_blog.html -f gfm $post -o $(echo ${post%%.md}.html | sed "s/sauce\//post\/$data/g")
         echo $post
     done
-    #fi
 }
 
 postit(){
@@ -32,14 +28,51 @@ postit(){
         printf "\t\t\t$(printf "$post" | sed 's/^/<a class="post_link" href="post\//' | sed "s/$/\">$title<\/a><br>/")\n" >> $LIST_DIR
     done
 
-    printf "\t</body>\n</html>" >> $LIST_DIR
+}
+
+tags(){
+    tag_html=$(grep -hA10 tags $BLOG/$SOURCE/* | grep -P "^\s+\-.*" | sed "s/^\s\+\-\s//g; s/$/.html/g" | sort | uniq -i)
+    tag_list=$(echo "$tag_html" | sed "s/^/$BLOG\/tags\//g")
+
+    #rm $BLOG/tags/*
+
+    for tag in $tag_list; do
+        cp $TEMPLATES/template_tags.html $tag
+        t=${tag%.html}
+        t=${tag#$BLOG/tags/}
+        posts=$(grep -iH "tags.*$t" $BLOG/post/* | cut -d: -f1)
+        title=$(echo $tag | sed "s/\.html//g; s/$BLOG\/tags\///g")
+        printf "\t<h1>marcados como: $title</h1>\n\t<hr>\n" >> $tag
+        for post in $posts; do
+            post_title=$(grep title $post | sed 's/<title>//; s/<\/title>//')
+            printf "\t\t$(echo "$post" | sed "s/blog/\.\./; s/^/<a class="post_link" href=\"/; s/$/\">$post_title<\/a><br>/")\n" >> $tag
+        done
+        printf "\t</div>\n\t<body>\n</html>" >> $tag
+    done
+
+    > $LIST_TAGS
+
+    printf "\t\t<h1>Tags</h1><hr>\n" >> $LIST_TAGS
+    printf "\t\t<ul class="tags">\n" >> $LIST_TAGS
+
+    for tag in $tag_html; do
+        echo "\t\t\t<li><a href="tags/$tag">${tag%.html}<a/></li>" >> $LIST_TAGS
+    done
+
+    printf "\t\t</ul>\n" >> $LIST_TAGS
+
+    cat $LIST_TAGS >> $LIST_DIR
+
+    printf "\t</div>\n\t</body>\n</html>" >> $LIST_DIR
 
     export LIST_OF_POSTS=$(cat $LIST_DIR)
 
     cat $TEMPLATES/template_index.html | envsubst > $BLOG/index.html
+
 }
 
 makeit
 postit
+tags
 
 echo "\033[045mDONE! 😎\033[0m"

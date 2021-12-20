@@ -1,9 +1,10 @@
 @import url("https://fontlibrary.org//face/chivo");
 
 :root{
-    --dark: #2E3842;
-    --main: #3f495c;
-    --text: #ffffff;
+    --dark: #1D2021;
+    --main: #2c2c2c;
+    --text: #f2f2e5;
+    --link: #B3C5E4;
 }
 
 *{
@@ -14,7 +15,7 @@
 }
 
 a{
-    color: #cfe2fa;
+    color: var(--link);
     text-decoration: none;
 }
 
@@ -64,7 +65,7 @@ td{
 }
 
 .desc{
-    color: #979FAD;
+    color: #aaa;
 }
 
 @media screen and (max-width: 415px){
