@@ -52,7 +52,7 @@ tags(){
 
     > $LIST_TAGS
 
-    printf "\t\t<h1>Tags</h1><hr>\n" >> $LIST_TAGS
+    printf "\t\t<center><h1>Tags</h1></center><hr>\n" >> $LIST_TAGS
     printf "\t\t<ul class="tags">\n" >> $LIST_TAGS
 
     for tag in $tag_html; do
