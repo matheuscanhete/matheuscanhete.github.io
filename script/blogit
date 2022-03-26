@@ -7,48 +7,51 @@ LIST_DIR=$TEMPLATES/list_of_all.html
 LIST_TAGS=$TEMPLATES/list_of_tags.html
 
 makeit(){
-    posts=$(ls $BLOG/$SOURCE/*md)
+    posts=$(ls $BLOG/$SOURCE/*md 2>/dev/null)
 
-    for post in $posts
-    do
-        data=$(grep date $post | sed 's/date.*\s//g')
-        pandoc --template $TEMPLATES/template_blog.html -f gfm $post -o $(echo ${post%%.md}.html | sed "s/sauce\//post\/$data/g")
-        echo $post
-    done
+    [ ! -z "$posts" ] && \
+        for post in $posts
+        do
+            data=$(grep date $post | sed 's/date.*\s//g')
+            pandoc --template $TEMPLATES/template_blog.html -f gfm $post -o $(echo ${post%%.md}.html | sed "s/sauce\//post\/$data/g")
+            echo $post
+        done
 }
 
 postit(){
     posts=$(ls $BLOG/post | sort -nfr)
 
     > $LIST_DIR 
-    
-    for post in $posts
-    do
-        title=$(grep "title" $BLOG/post/$post | cut -d '<' -f2 | sed 's/^title.*>//g')
-        printf "\t\t\t$(printf "$post" | sed 's/^/<a class="post_link" href="post\//' | sed "s/$/\">$title<\/a><br>/")\n" >> $LIST_DIR
-    done
+
+    [ ! -z "$posts" ] && \
+        for post in $posts
+        do
+            title=$(grep "title" $BLOG/post/$post | cut -d '<' -f2 | sed 's/^title.*>//g')
+            printf "\t\t\t$(printf "$post" | sed 's/^/<a class="post_link" href="post\//' | sed "s/$/\">$title<\/a><br>/")\n" >> $LIST_DIR
+        done
 
 }
 
 tags(){
-    tag_html=$(grep -hA10 tags $BLOG/$SOURCE/* | grep -P "^\s+\-.*" | sed "s/^\s\+\-\s//g; s/$/.html/g" | sort | uniq -i)
+    tag_html=$(grep -hA10 tags $BLOG/$SOURCE/* 2>/dev/null | grep -P "^\s+\-.*" | sed "s/^\s\+\-\s//g; s/$/.html/g" | sort | uniq -i)
     tag_list=$(echo "$tag_html" | sed "s/^/$BLOG\/tags\//g")
 
-    #rm $BLOG/tags/*
+    rm $BLOG/tags/*
 
-    for tag in $tag_list; do
-        cp $TEMPLATES/template_tags.html $tag
-        t=${tag%.html}
-        t=${tag#$BLOG/tags/}
-        posts=$(grep -iH "tags.*$t" $BLOG/post/* | cut -d: -f1)
-        title=$(echo $tag | sed "s/\.html//g; s/$BLOG\/tags\///g")
-        printf "\t<h1>marcados como: $title</h1>\n\t<hr>\n" >> $tag
-        for post in $posts; do
-            post_title=$(grep title $post | sed 's/<title>//; s/<\/title>//')
-            printf "\t\t$(echo "$post" | sed "s/blog/\.\./; s/^/<a class="post_link" href=\"/; s/$/\">$post_title<\/a><br>/")\n" >> $tag
+    [ ! -z "$tag_list" ] && \
+        for tag in $tag_list; do
+            cp $TEMPLATES/template_tags.html $tag 2>/dev/null
+            t=${tag%.html}
+            t=${tag#$BLOG/tags/}
+            posts=$(grep -iH "tags.*$t" $BLOG/post/* 2>/dev/null | cut -d: -f1)
+            title=$(echo $tag | sed "s/\.html//g; s/$BLOG\/tags\///g")
+            printf "\t<h1>marcados como: $title</h1>\n\t<hr>\n" >> $tag
+            for post in $posts; do
+                post_title=$(grep title $post | sed 's/<title>//; s/<\/title>//')
+                printf "\t\t$(echo "$post" | sed "s/blog/\.\./; s/^/<a class="post_link" href=\"/; s/$/\">$post_title<\/a><br>/")\n" >> $tag
+            done
+            printf "\t</div>\n\t<body>\n</html>" >> $tag
         done
-        printf "\t</div>\n\t<body>\n</html>" >> $tag
-    done
 
     > $LIST_TAGS
 
